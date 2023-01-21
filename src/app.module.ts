@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { KnexModule } from 'nestjs-knex';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { ApiKeysController } from './apiKeys/apiKeys.controller';
+import { ApiKeysService } from './apiKeys/apiKeys.service';
 
 @Module({
   imports: [
@@ -18,7 +18,7 @@ import { AppService } from './app.service';
       }
     })
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [ApiKeysController],
+  providers: [ApiKeysService],
 })
 export class AppModule {}
