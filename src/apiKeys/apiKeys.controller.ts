@@ -1,21 +1,33 @@
-import { Controller, HttpStatus, Res, Get, Post, Param, Body, Patch, Delete } from '@nestjs/common';
+import {
+  Controller,
+  HttpStatus,
+  Res,
+  Get,
+  Post,
+  Param,
+  Body,
+  Patch,
+  Delete,
+} from '@nestjs/common';
 import { ApiKeysService } from './apiKeys.service';
-import { ApiKeyDto, CreateApiKeyDto, UpdateApiKeyDto } from './apiKeys.interface';
+import {
+  ApiKeyDto,
+  CreateApiKeyDto,
+  UpdateApiKeyDto,
+} from './apiKeys.interface';
 import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 
 @ApiTags('API Keys')
 @Controller()
 export class ApiKeysController {
-  constructor(
-    private readonly apiKeysService: ApiKeysService,
-  ) {}
+  constructor(private readonly apiKeysService: ApiKeysService) {}
 
   @Post('/v1/api-keys')
   async createApiKey(
     @Body() input: CreateApiKeyDto,
     @Res({ passthrough: true }) res: Response,
-    ): Promise<ApiKeyDto> {
+  ): Promise<ApiKeyDto> {
     let data = await this.apiKeysService.createApiKey(input);
     res.status(HttpStatus.CREATED);
     return data;

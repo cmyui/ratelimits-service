@@ -1,4 +1,4 @@
-import { Module,NestModule, MiddlewareConsumer  } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { KnexModule } from 'nestjs-knex';
 import { ApiKeysController } from './apiKeys/apiKeys.controller';
 import { ApiKeysService } from './apiKeys/apiKeys.service';
@@ -16,16 +16,14 @@ import { RequestTimeMiddleware } from './middleware/requestTime';
           password: process.env.DB_PASS!,
           database: process.env.DB_NAME!,
         },
-      }
-    })
+      },
+    }),
   ],
   controllers: [ApiKeysController],
   providers: [ApiKeysService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(RequestTimeMiddleware)
-      .forRoutes('*');
+    consumer.apply(RequestTimeMiddleware).forRoutes('*');
   }
 }
