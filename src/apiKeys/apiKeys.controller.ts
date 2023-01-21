@@ -25,10 +25,10 @@ export class ApiKeysController {
 
   @Post('/v1/api-keys')
   async createApiKey(
-    @Body() input: CreateApiKeyDto,
+    @Body() { key, name }: CreateApiKeyDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<ApiKeyDto> {
-    let data = await this.apiKeysService.createApiKey(input);
+    const data = await this.apiKeysService.createApiKey(key, name);
     res.status(HttpStatus.CREATED);
     return data;
   }
@@ -37,7 +37,7 @@ export class ApiKeysController {
   async getManyApiKeys(
     @Res({ passthrough: true }) res: Response,
   ): Promise<Array<ApiKeyDto>> {
-    let data = await this.apiKeysService.getManyApiKeys();
+    const data = await this.apiKeysService.getManyApiKeys();
     return data;
   }
 
@@ -46,7 +46,7 @@ export class ApiKeysController {
     @Param('id') id: number,
     @Res({ passthrough: true }) res: Response,
   ): Promise<ApiKeyDto | null> {
-    let data = await this.apiKeysService.getApiKey(id);
+    const data = await this.apiKeysService.getApiKey(id);
     if (!data) {
       res.status(HttpStatus.NOT_FOUND);
       return null;
@@ -57,10 +57,10 @@ export class ApiKeysController {
   @Patch('/v1/api-keys/:id')
   async updateApiKey(
     @Param('id') id: number,
-    @Body() updates: UpdateApiKeyDto,
+    @Body() { key, name }: UpdateApiKeyDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<ApiKeyDto | null> {
-    let data = await this.apiKeysService.updateApiKey(id, updates);
+    const data = await this.apiKeysService.updateApiKey(id, key, name);
     if (!data) {
       res.status(HttpStatus.NOT_FOUND);
       return null;
@@ -73,7 +73,7 @@ export class ApiKeysController {
     @Param('id') id: number,
     @Res({ passthrough: true }) res: Response,
   ): Promise<ApiKeyDto | null> {
-    let data = await this.apiKeysService.deleteApiKey(id);
+    const data = await this.apiKeysService.deleteApiKey(id);
     if (!data) {
       res.status(HttpStatus.NOT_FOUND);
       return null;

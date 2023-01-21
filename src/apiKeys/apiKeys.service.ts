@@ -1,9 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  ApiKeyDto,
-  CreateApiKeyDto,
-  UpdateApiKeyDto,
-} from './apiKeys.interface';
+import { ApiKeyDto } from './apiKeys.interface';
 import { InjectKnex, Knex } from 'nestjs-knex';
 
 const READ_PARAMS = ['id', 'key', 'name', 'status', 'createdAt', 'updatedAt'];
@@ -12,11 +8,9 @@ const READ_PARAMS = ['id', 'key', 'name', 'status', 'createdAt', 'updatedAt'];
 export class ApiKeysService {
   constructor(@InjectKnex() private readonly knex: Knex) {}
 
-  async createApiKey(input: CreateApiKeyDto): Promise<ApiKeyDto> {
-    let rowIds = await this.knex<ApiKeyDto>('api_keys').insert({
-      key: input.key,
-      name: input.name,
-    });
+  async createApiKey(key: string, name: string): Promise<ApiKeyDto> {
+    const rowIds = await this.knex<ApiKeyDto>('api_keys')
+      .insert({ key: key, name: name });
 
     return await this.knex
       .select(...READ_PARAMS)
@@ -26,7 +20,8 @@ export class ApiKeysService {
   }
 
   async getManyApiKeys(): Promise<Array<ApiKeyDto>> {
-    return await this.knex<ApiKeyDto>('api_keys').select(...READ_PARAMS);
+    return await this.knex<ApiKeyDto>('api_keys')
+      .select(...READ_PARAMS);
   }
 
   async getApiKey(id: number): Promise<ApiKeyDto | null> {
@@ -39,9 +34,10 @@ export class ApiKeysService {
 
   async updateApiKey(
     id: number,
-    updates: UpdateApiKeyDto,
+    key: string | undefined,
+    name: string | undefined,
   ): Promise<ApiKeyDto | null> {
-    let apiKey = await this.knex
+    const apiKey = await this.knex
       .select(...READ_PARAMS)
       .from<ApiKeyDto>('api_keys')
       .where({ id: id })
@@ -50,21 +46,20 @@ export class ApiKeysService {
       return null;
     }
 
-    // TODO: is there a nicer way?
-    let realUpdates: any = {};
-    if (updates.key !== undefined) {
-      realUpdates.key = updates.key;
+    const updates: any = {};
+    if (key !== undefined) {
+      updates.key = key;
     }
-    if (updates.name !== undefined) {
-      realUpdates.name = updates.name;
+    if (name !== undefined) {
+      updates.name = name;
     }
 
-    if (Object.keys(realUpdates).length === 0) {
+    if (Object.keys(updates).length === 0) {
       return apiKey;
     }
 
     await this.knex<ApiKeyDto>('api_keys')
-      .update(realUpdates)
+      .update(updates)
       .where({ id: id });
 
     return await this.knex
@@ -75,7 +70,7 @@ export class ApiKeysService {
   }
 
   async deleteApiKey(id: number): Promise<ApiKeyDto | null> {
-    let apiKey = await this.knex
+    const apiKey = await this.knex
       .select(...READ_PARAMS)
       .from<ApiKeyDto>('api_keys')
       .where({ id: id })
@@ -84,7 +79,9 @@ export class ApiKeysService {
       return null;
     }
 
-    await this.knex<ApiKeyDto>('api_keys').delete().where({ id: id });
+    await this.knex<ApiKeyDto>('api_keys')
+      .delete()
+      .where({ id: id });
 
     return apiKey;
   }
